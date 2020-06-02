@@ -1,26 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { lazy, Suspense } from 'react';
+import { Switch, Route } from 'react-router-dom';
+// import HomePage from './pages/HomePage';
+// import MoviesPage from './pages/MoviesPage';
+// import MovieDetailsPage from './pages/MovieDetailsPage';
+// import Cast from './pages/MovieDetailsPage';
+// import Reviews from './pages/MovieDetailsPage';
+// import NotFoundPage from './pages/NotFoundPage';
+import Nav from './components/Nav';
+import styles from './App.module.css';
 
-function App() {
+
+const AsyncHomePage = lazy(() => import('./pages/HomePage' /* webpackChunkName: "home-page" */));
+
+const AsyncMovieDetailsPage = lazy(() => import('./pages/MovieDetailsPage' /* webpackChunkName: "movie-detail-page" */));
+
+const AsyncMoviesPage = lazy(() => import('./pages/MoviesPage' /* webpackChunkName: "movies-page" */));
+
+const AsyncNotFoundPage = lazy(() => import('./pages/NotFoundPage' /* webpackChunkName: "not-found-page" */));
+
+
+const App = () => {
+  const style = [styles.App];
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={style}>
+      <Nav className={styles.Nav} />
+      <Suspense fallback={<h2>Loading...</h2>}>
+        <Switch>
+          <Route path='/' exact component={AsyncHomePage} />
+          {/* <Route path='/movies/:movieId/reviews' component={Reviews} /> */}
+          {/* <Route path='/movies/:movieId/cast' component={Cast} /> */}
+          <Route path='/movies/:movieId' component={AsyncMovieDetailsPage} />
+          <Route path='/movies' component={AsyncMoviesPage} />
+          <Route component={AsyncNotFoundPage} />
+        </Switch>
+      </Suspense>
     </div>
+
   );
-}
+};
 
 export default App;
